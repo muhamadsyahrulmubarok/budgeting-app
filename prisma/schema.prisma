@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Income {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  source      String
+  description String?
+  date        DateTime
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("income")
+}
+
+model Expense {
+  id          Int       @id @default(autoincrement())
+  amount      Float
+  description String?
+  date        DateTime
+  createdAt   DateTime  @default(now()) @map("created_at")
+  categoryId  Int?      @map("category_id")
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@map("expenses")
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  expenses  Expense[]
+
+  @@map("categories")
+}
