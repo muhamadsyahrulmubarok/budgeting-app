@@ -20,19 +20,13 @@ No authentication is required.
 npm install
 ```
 
-2. Create your local environment file:
-
-```bash
-cp .env.example .env
-```
-
-3. Run Prisma migration (creates local SQLite DB and tables):
+2. Run Prisma migration (creates local SQLite DB and tables):
 
 ```bash
 npx prisma migrate dev
 ```
 
-4. Start development server:
+3. Start development server:
 
 ```bash
 npm run dev
@@ -169,6 +163,7 @@ Key fields:
 ## Notes
 
 - The SQLite DB file is local: `prisma/dev.db`.
+- You can optionally override the DB location with `DATABASE_URL` in `.env`.
 - This project is designed for one local user and intentionally keeps logic simple.
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
