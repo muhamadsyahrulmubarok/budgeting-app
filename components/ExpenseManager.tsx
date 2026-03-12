@@ -18,14 +18,18 @@ type CategoryOption = {
   name: string;
 };
 
+import type { DateFormatOption } from "@/lib/settings-constants";
+
 type ExpenseManagerProps = {
   expenses: ExpenseItem[];
   categories: CategoryOption[];
+  currency?: string;
+  dateFormat?: DateFormatOption;
 };
 
 const today = new Date().toISOString().slice(0, 10);
 
-export function ExpenseManager({ expenses, categories }: ExpenseManagerProps) {
+export function ExpenseManager({ expenses, categories, currency = "USD", dateFormat = "medium" }: ExpenseManagerProps) {
   const router = useRouter();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [amount, setAmount] = useState("");
@@ -189,11 +193,11 @@ export function ExpenseManager({ expenses, categories }: ExpenseManagerProps) {
             ) : (
               expenses.map((item) => (
                 <tr key={item.id} className="border-t border-slate-200">
-                  <td className="px-4 py-3">{formatDate(item.date)}</td>
+                  <td className="px-4 py-3">{formatDate(item.date, dateFormat)}</td>
                   <td className="px-4 py-3">{item.categoryName ?? "Uncategorized"}</td>
                   <td className="px-4 py-3">{item.description ?? "-"}</td>
                   <td className="px-4 py-3 font-medium text-rose-600">
-                    {formatCurrency(item.amount)}
+                    {formatCurrency(item.amount, currency)}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">

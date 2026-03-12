@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "/expenses", label: "Expenses" },
   { href: "/categories", label: "Categories" },
   { href: "/reports", label: "Reports" },
+  { href: "/settings", label: "Settings" },
 ];
 
 export function Sidebar() {

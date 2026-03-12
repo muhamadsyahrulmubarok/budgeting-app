@@ -4,6 +4,7 @@ import {
   getTotals,
 } from "@/lib/budget";
 import { formatCurrency } from "@/lib/format";
+import { getSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,12 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
   const selectedMonth =
     requestedMonth && /^\d{4}-\d{2}$/.test(requestedMonth) ? requestedMonth : "all";
 
-  const [totals, monthly] = await Promise.all([getTotals(), getMonthlyIncomeVsExpenses()]);
+  const [totals, monthly, settings] = await Promise.all([
+    getTotals(),
+    getMonthlyIncomeVsExpenses(),
+    getSettings(),
+  ]);
+  const { currency } = settings;
   const spendingByCategory = await getCategorySpending(
     selectedMonth === "all" ? undefined : selectedMonth,
   );
@@ -68,19 +74,19 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <p className="text-sm text-slate-500">Current Remaining Balance</p>
           <p className="mt-1 text-2xl font-semibold text-slate-900">
-            {formatCurrency(totals.currentBalance)}
+            {formatCurrency(totals.currentBalance, currency)}
           </p>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <p className="text-sm text-slate-500">Total Earnings</p>
           <p className="mt-1 text-2xl font-semibold text-emerald-600">
-            {formatCurrency(totals.totalEarnings)}
+            {formatCurrency(totals.totalEarnings, currency)}
           </p>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <p className="text-sm text-slate-500">Total Expenses</p>
           <p className="mt-1 text-2xl font-semibold text-rose-600">
-            {formatCurrency(totals.totalExpenses)}
+            {formatCurrency(totals.totalExpenses, currency)}
           </p>
         </div>
       </section>
@@ -91,9 +97,9 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
             Summary for {selectedMonthSummary.month}
           </h3>
           <p className="mt-1 text-sm text-slate-600">
-            Income: {formatCurrency(selectedMonthSummary.income)} | Expenses:{" "}
-            {formatCurrency(selectedMonthSummary.expenses)} | Balance:{" "}
-            {formatCurrency(selectedMonthSummary.balance)}
+            Income: {formatCurrency(selectedMonthSummary.income, currency)} | Expenses:{" "}
+            {formatCurrency(selectedMonthSummary.expenses, currency)} | Balance:{" "}
+            {formatCurrency(selectedMonthSummary.balance, currency)}
           </p>
         </section>
       ) : null}
@@ -111,7 +117,7 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
                 <div key={item.category} className="flex items-center justify-between text-sm">
                   <span className="text-slate-700">{item.category}</span>
                   <span className="font-medium text-slate-900">
-                    {formatCurrency(item.total)}
+                    {formatCurrency(item.total, currency)}
                   </span>
                 </div>
               ))
@@ -133,8 +139,8 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
                   className="grid grid-cols-[90px_1fr_1fr] gap-2 rounded-md border border-slate-200 p-2"
                 >
                   <span className="font-medium text-slate-700">{item.month}</span>
-                  <span className="text-emerald-600">{formatCurrency(item.income)}</span>
-                  <span className="text-rose-600">{formatCurrency(item.expenses)}</span>
+                  <span className="text-emerald-600">{formatCurrency(item.income, currency)}</span>
+                  <span className="text-rose-600">{formatCurrency(item.expenses, currency)}</span>
                 </div>
               ))
             )}

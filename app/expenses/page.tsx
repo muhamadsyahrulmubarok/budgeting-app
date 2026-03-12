@@ -1,13 +1,15 @@
 import { ExpenseManager } from "@/components/ExpenseManager";
 import { ensureDefaultCategories, getCategoriesWithCounts, getExpenseEntries } from "@/lib/budget";
+import { getSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
 export default async function ExpensesPage() {
   await ensureDefaultCategories();
-  const [expenseEntries, categories] = await Promise.all([
+  const [expenseEntries, categories, settings] = await Promise.all([
     getExpenseEntries(),
     getCategoriesWithCounts(),
+    getSettings(),
   ]);
 
   const expenses = expenseEntries.map((entry) => ({
@@ -33,7 +35,7 @@ export default async function ExpensesPage() {
         </p>
       </section>
 
-      <ExpenseManager expenses={expenses} categories={categoryOptions} />
+      <ExpenseManager expenses={expenses} categories={categoryOptions} currency={settings.currency} dateFormat={settings.dateFormat} />
     </div>
   );
 }

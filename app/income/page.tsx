@@ -1,10 +1,11 @@
 import { IncomeManager } from "@/components/IncomeManager";
 import { getIncomeEntries } from "@/lib/budget";
+import { getSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
 export default async function IncomePage() {
-  const entries = await getIncomeEntries();
+  const [entries, settings] = await Promise.all([getIncomeEntries(), getSettings()]);
   const income = entries.map((entry) => ({
     id: entry.id,
     amount: entry.amount,
@@ -22,7 +23,7 @@ export default async function IncomePage() {
         </p>
       </section>
 
-      <IncomeManager income={income} />
+      <IncomeManager income={income} currency={settings.currency} dateFormat={settings.dateFormat} />
     </div>
   );
 }

@@ -1,11 +1,13 @@
 import { StatCard } from "@/components/StatCard";
 import { getDashboardData } from "@/lib/budget";
 import { formatCurrency } from "@/lib/format";
+import { getSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const data = await getDashboardData();
+  const [data, settings] = await Promise.all([getDashboardData(), getSettings()]);
+  const { currency } = settings;
 
   return (
     <div className="space-y-6">
@@ -19,17 +21,17 @@ export default async function DashboardPage() {
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           title="Current Balance"
-          value={formatCurrency(data.currentBalance)}
+          value={formatCurrency(data.currentBalance, currency)}
           tone={data.currentBalance >= 0 ? "positive" : "negative"}
         />
         <StatCard
           title="Total Earnings"
-          value={formatCurrency(data.totalEarnings)}
+          value={formatCurrency(data.totalEarnings, currency)}
           tone="positive"
         />
         <StatCard
           title="Total Expenses"
-          value={formatCurrency(data.totalExpenses)}
+          value={formatCurrency(data.totalExpenses, currency)}
           tone="negative"
         />
       </section>
@@ -48,7 +50,7 @@ export default async function DashboardPage() {
                   <div className="mb-1 flex items-center justify-between text-sm">
                     <span className="text-slate-700">{item.category}</span>
                     <span className="font-medium text-slate-900">
-                      {formatCurrency(item.total)}
+                      {formatCurrency(item.total, currency)}
                     </span>
                   </div>
                   <div className="h-2 rounded-full bg-slate-200">
@@ -75,14 +77,14 @@ export default async function DashboardPage() {
             <div className="rounded-md bg-slate-100 p-3">
               <p className="font-medium text-slate-700">Current month ({data.currentMonth.month})</p>
               <p className="mt-1 text-slate-600">
-                Income: <span className="font-medium">{formatCurrency(data.currentMonth.income)}</span>
+                Income: <span className="font-medium">{formatCurrency(data.currentMonth.income, currency)}</span>
               </p>
               <p className="text-slate-600">
                 Expenses:{" "}
-                <span className="font-medium">{formatCurrency(data.currentMonth.expenses)}</span>
+                <span className="font-medium">{formatCurrency(data.currentMonth.expenses, currency)}</span>
               </p>
               <p className="text-slate-600">
-                Balance: <span className="font-medium">{formatCurrency(data.currentMonth.balance)}</span>
+                Balance: <span className="font-medium">{formatCurrency(data.currentMonth.balance, currency)}</span>
               </p>
             </div>
 
@@ -96,7 +98,7 @@ export default async function DashboardPage() {
                 >
                   <span className="font-medium text-slate-700">{item.month}</span>
                   <span className="text-slate-600">
-                    {formatCurrency(item.income)} / {formatCurrency(item.expenses)}
+                    {formatCurrency(item.income, currency)} / {formatCurrency(item.expenses, currency)}
                   </span>
                 </div>
               ))
